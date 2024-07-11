@@ -53,3 +53,7 @@ To get started with the chat application, follow these steps:
    ```
 
 2. Open your browser and navigate to `http://localhost:3000`.
+
+## Demo of the Application
+
+You can try the app by navigating through the link: `https://chatttappp.vercel.app/dashboard`
