@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { pusherClient } from '@/lib/pusher'
 import { chatHrefConstructor, toPusherkey } from '@/lib/utils'
@@ -17,18 +17,19 @@ interface ExtendedMessage extends Message {
     senderName: string
 }
 
-const SideBarChatList: FC<SideBarChatListProps> = ({sessionId, friends}) => {
+const SideBarChatList: FC<SideBarChatListProps> = ({ sessionId, friends }) => {
     const router = useRouter()
     const pathName = usePathname()
 
     const [unseenMessages, setUnseenMessages] = useState<Message[]>([])
+    const [activeChats, setActiveChats] = useState<User[]>(friends)
 
     useEffect(() => {
         pusherClient.subscribe(toPusherkey(`user:${sessionId}:chats`))
         pusherClient.subscribe(toPusherkey(`user:${sessionId}:friends`))
 
-        const friendHandler = () => {
-            router.refresh()
+        const friendHandler = (newFriend: User) => {
+            setActiveChats((prev) => [...prev, newFriend])
         }
 
         const chatHandler = (message: ExtendedMessage) => {
@@ -37,11 +38,11 @@ const SideBarChatList: FC<SideBarChatListProps> = ({sessionId, friends}) => {
             if (!shouldNotify) return
 
             toast.custom((t) => (
-                <UnseenChatToast 
-                    t={t} 
-                    sessionId={sessionId} 
-                    senderId={message.senderId} 
-                    senderImg={message.senderImg} senderMessage={message.text} 
+                <UnseenChatToast
+                    t={t}
+                    sessionId={sessionId}
+                    senderId={message.senderId}
+                    senderImg={message.senderImg} senderMessage={message.text}
                     senderName={message.senderName}
                 />
             ))
@@ -61,8 +62,8 @@ const SideBarChatList: FC<SideBarChatListProps> = ({sessionId, friends}) => {
 
     useEffect(() => {
         if (pathName?.includes('chat')) {
-            setUnseenMessages((prev) =>{
-                return prev.filter((msg) =>!pathName.includes(msg.senderId))
+            setUnseenMessages((prev) => {
+                return prev.filter((msg) => !pathName.includes(msg.senderId))
             })
         }
     }, [pathName])
@@ -71,7 +72,7 @@ const SideBarChatList: FC<SideBarChatListProps> = ({sessionId, friends}) => {
 
     return (
         <ul role='list' className='max-h-[25rem] overflow-y-auto -mx-2 space-y-1'>
-            {friends.sort().map((friend) => {
+            {activeChats.sort().map((friend) => {
                 const unseenMessagesCount = unseenMessages.filter((unseenMessage) => {
                     return unseenMessage.senderId === friend.id
                 }).length

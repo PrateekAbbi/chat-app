@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { FC, useState } from 'react'
 import Button from './ui/Button'
@@ -8,15 +8,15 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-interface AddFriendButtonProps {}
+interface AddFriendButtonProps { }
 
 type FormData = z.infer<typeof addFriendValidater>
 
-const AddFriendButton: FC<AddFriendButtonProps> = ({}) => {
+const AddFriendButton: FC<AddFriendButtonProps> = ({ }) => {
     const [successSate, setSuccessSate] = useState<boolean>(false)
 
     const {
-        register, handleSubmit, setError, formState: {errors}
+        register, handleSubmit, setError, formState: { errors }
     } = useForm<FormData>({
         resolver: zodResolver(addFriendValidater)
     })
@@ -24,7 +24,7 @@ const AddFriendButton: FC<AddFriendButtonProps> = ({}) => {
     const addFriend = async (email: string) => {
         try {
             const validatedEmail = addFriendValidater.parse({ email })
-            
+
             await axios.post('/api/friends/add', {
                 email: validatedEmail
             })
@@ -34,7 +34,7 @@ const AddFriendButton: FC<AddFriendButtonProps> = ({}) => {
         } catch (error) {
             if (error instanceof z.ZodError) setError('email', { message: error.message })
             else if (error instanceof AxiosError) setError('email', { message: error.response?.data })
-            else setError('email', { message: 'Something went wrong!'})
+            else setError('email', { message: 'Something went wrong!' })
 
             return
         }
@@ -53,7 +53,7 @@ const AddFriendButton: FC<AddFriendButtonProps> = ({}) => {
             <div className='mt-2 flex gap-4'>
                 <input
                     {...register('email')}
-                    type='text' 
+                    type='text'
                     className='block w-full rounded-medium border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-onset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     placeholder='you@example.com'
                 />
